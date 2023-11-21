@@ -1,12 +1,13 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-
+import { LinkedIn } from "react-linkedin-login-oauth2";
 import "./LoginPage.css";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { loginValidation } from "../../validation/Validation";
 import { loginUserAsync } from "./LoginSlice";
+// import LinkedInAuth from "../../../auth";
 
 function Login() {
   const dispatch = useDispatch();
@@ -18,6 +19,21 @@ function Login() {
   const onSubmit = (values) => {
     dispatch(loginUserAsync(values));
     console.log("you are logged in ");
+  };
+
+  // const handleLinkedInLogin = async () => {
+  //   try {
+  //     const user = await LinkedInAuth.login();
+  //     // Handle the user object returned by LinkedIn
+  //     console.log(user);
+  //   } catch (error) {
+  //     console.error("LinkedIn login error", error);
+  //   }
+  // };
+  // LinkedIn login success callback
+  const handleLinkedInLogin = (data) => {
+    // Handle the LinkedIn login data (e.g., dispatch an action to store the user)
+    console.log("LinkedIn login success:", data);
   };
 
   return (
@@ -67,6 +83,15 @@ function Login() {
             <button type="submit">Login</button>
             <div>
               <Link to="/forgot-password">Forget password</Link>
+            </div>
+            <div>
+              <LinkedIn
+                clientId="77l6aqdk67rw1w"
+                redirectUri="http://localhost:3000/auth/callback"
+                onSuccess={handleLinkedInLogin}
+              >
+                Login with LinkedIn
+              </LinkedIn>
             </div>
           </Form>
         )}
