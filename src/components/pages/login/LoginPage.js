@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 
 import { loginValidation } from "../../validation/Validation";
 import { loginUserAsync } from "./LoginSlice";
-// import LinkedInAuth from "../../../auth";
 
 function Login() {
   const dispatch = useDispatch();
@@ -20,22 +19,24 @@ function Login() {
     dispatch(loginUserAsync(values));
     console.log("you are logged in ");
   };
-
-  // const handleLinkedInLogin = async () => {
-  //   try {
-  //     const user = await LinkedInAuth.login();
-  //     // Handle the user object returned by LinkedIn
-  //     console.log(user);
-  //   } catch (error) {
-  //     console.error("LinkedIn login error", error);
-  //   }
-  // };
-  // LinkedIn login success callback
-  const handleLinkedInLogin = (data) => {
-    // Handle the LinkedIn login data (e.g., dispatch an action to store the user)
-    console.log("LinkedIn login success:", data);
-  };
-
+  function handleFailure(error) {
+    console.error("LinkedIn authentication failed:", error);
+    // Add your custom error handling logic here, such as displaying a user-friendly error message.
+  }
+  function handleSuccess(e) {
+    fetch("http://127.0.0.1:8000/linkedin/", {
+      method: "POST",
+      body: JSON.stringify({ auth_token: e }),
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        document.getElementById("email_id").innerText = res["email"];
+        document.getElementById("Auth_token").innerText = res["tokens"];
+      });
+  }
   return (
     <div className="registration-container">
       <h2>Login</h2>
@@ -62,7 +63,6 @@ function Login() {
                 className="error-message"
               />
             </div>
-
             <div className="form-field">
               <label htmlFor="password">Password</label>
               <Field
@@ -79,20 +79,29 @@ function Login() {
                 className="error-message"
               />
             </div>
-
             <button type="submit">Login</button>
             <div>
               <Link to="/forgot-password">Forget password</Link>
             </div>
-            <div>
-              <LinkedIn
-                clientId="77l6aqdk67rw1w"
-                redirectUri="http://localhost:3000/auth/callback"
-                onSuccess={handleLinkedInLogin}
-              >
-                Login with LinkedIn
-              </LinkedIn>
-            </div>
+            {console.log(window.location.origin)}
+            <LinkedIn
+              clientId="77l6aqdk67rw1w"
+              // redirectUri={`${window.location.origin}/inkedin-oauth2/callback`}
+              redirectUri={`http://localhost:3000/linkedin-oauth2/callback`}
+              onSuccess={handleSuccess}
+              onFailure={handleFailure}
+              className="linkedin"
+            >
+              {({ linkedInLogin }) => (
+                <button
+                  className="linkedin"
+                  onClick={linkedInLogin}
+                  type="submit"
+                >
+                  Sign in with Linked In
+                </button>
+              )}
+            </LinkedIn>
           </Form>
         )}
       </Formik>
