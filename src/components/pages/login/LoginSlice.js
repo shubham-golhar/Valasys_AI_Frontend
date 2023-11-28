@@ -6,6 +6,23 @@ const initialState = {
   error: null,
 };
 
+// Your React component
+
+const csrfToken = document.cookie
+  .split("; ")
+  .find((row) => row.startsWith("csrftoken="))
+  .split("=")[1];
+
+// Now you can include this token in your fetch or Axios requests
+// fetch('/your-endpoint/', {
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'X-CSRFToken': csrfToken,
+//     },
+//     // other request configurations
+// })
+
 export const loginUserAsync = createAsyncThunk(
   "login/loginUserAsync",
   async (userData) => {
@@ -13,6 +30,7 @@ export const loginUserAsync = createAsyncThunk(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
       },
       body: JSON.stringify(userData),
     });
@@ -44,9 +62,9 @@ const LoginSlice = createSlice({
         state.status = "succeeded";
         state.loggedInUser = action.payload;
       })
-      .addCase(loginUserAsync.rejected, (state) => {
+      .addCase(loginUserAsync.rejected, (state, action) => {
         state.status = "failed";
-        state.error = state.error.message;
+        state.error = action.error.message; // Update this line
       });
   },
 });

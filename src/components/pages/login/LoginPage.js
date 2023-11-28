@@ -2,13 +2,14 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { LinkedIn } from "react-linkedin-login-oauth2";
 import "./LoginPage.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { loginValidation } from "../../validation/Validation";
 import { loginUserAsync } from "./LoginSlice";
 
 function Login() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const initialValues = {
     businessEmail: "",
@@ -17,25 +18,14 @@ function Login() {
 
   const onSubmit = (values) => {
     dispatch(loginUserAsync(values));
-    console.log("you are logged in ");
+    navigate("/dashboard");
   };
   function handleFailure(error) {
     console.error("LinkedIn authentication failed:", error);
     // Add your custom error handling logic here, such as displaying a user-friendly error message.
   }
-  function handleSuccess(e) {
-    fetch("http://127.0.0.1:8000/linkedin/", {
-      method: "POST",
-      body: JSON.stringify({ auth_token: e }),
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        document.getElementById("email_id").innerText = res["email"];
-        document.getElementById("Auth_token").innerText = res["tokens"];
-      });
+  function handleSuccess(data) {
+    console.log(data);
   }
   return (
     <div className="registration-container">
@@ -90,6 +80,7 @@ function Login() {
               redirectUri={`http://localhost:3000/linkedin-oauth2/callback`}
               onSuccess={handleSuccess}
               onFailure={handleFailure}
+              scope="r_liteprofile r_emailaddress"
               className="linkedin"
             >
               {({ linkedInLogin }) => (
