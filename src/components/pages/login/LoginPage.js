@@ -17,16 +17,11 @@ function Login() {
   };
 
   const onSubmit = (values) => {
+    console.log("values", values);
     dispatch(loginUserAsync(values));
     navigate("/dashboard");
   };
-  function handleFailure(error) {
-    console.error("LinkedIn authentication failed:", error);
-    // Add your custom error handling logic here, such as displaying a user-friendly error message.
-  }
-  function handleSuccess(data) {
-    console.log(data);
-  }
+
   return (
     <div className="registration-container">
       <h2>Login</h2>
@@ -41,14 +36,14 @@ function Login() {
               <label htmlFor="businessEmail">Business Email</label>
               <Field
                 type="email"
-                id="businessEmail"
-                name="businessEmail"
+                id="username"
+                name="username"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.username}
               />
               <ErrorMessage
-                name="businessEmail"
+                name="username"
                 component="div"
                 className="error-message"
               />
@@ -73,26 +68,6 @@ function Login() {
             <div>
               <Link to="/forgot-password">Forget password</Link>
             </div>
-            {console.log(window.location.origin)}
-            <LinkedIn
-              clientId="77l6aqdk67rw1w"
-              // redirectUri={`${window.location.origin}/inkedin-oauth2/callback`}
-              redirectUri={`http://localhost:3000/linkedin-oauth2/callback`}
-              onSuccess={handleSuccess}
-              onFailure={handleFailure}
-              scope="r_liteprofile r_emailaddress"
-              className="linkedin"
-            >
-              {({ linkedInLogin }) => (
-                <button
-                  className="linkedin"
-                  onClick={linkedInLogin}
-                  type="submit"
-                >
-                  Sign in with Linked In
-                </button>
-              )}
-            </LinkedIn>
           </Form>
         )}
       </Formik>

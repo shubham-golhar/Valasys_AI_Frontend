@@ -22,7 +22,7 @@ export const registerValidation = Yup.object({
 });
 
 export const loginValidation = Yup.object({
-  businessEmail: Yup.string()
+  username: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
   password: Yup.string().required("Password is required"),
