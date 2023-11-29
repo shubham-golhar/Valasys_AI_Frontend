@@ -12,7 +12,7 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const initialValues = {
-    businessEmail: "",
+    username: "",
     password: "",
   };
 
@@ -45,7 +45,7 @@ function Login() {
                 name="businessEmail"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.businessEmail}
+                value={values.username}
               />
               <ErrorMessage
                 name="businessEmail"

@@ -1,17 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
+import axios from "axios";
 const initialState = {
   loggedInUser: {},
   status: "idle", // "idle", "loading", "succeeded", "failed"
   error: null,
 };
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+axios.defaults.withCredentials = true;
 
+const client = axios.create({
+  baseURL: "http://localhost:8000",
+});
 // Your React component
 
-const csrfToken = document.cookie
-  .split("; ")
-  .find((row) => row.startsWith("csrftoken="))
-  .split("=")[1];
+// const csrfToken = document.cookie
+//   .split("; ")
+//   .find((row) => row.startsWith("csrftoken="))
+//   .split("=")[1];
 
 // Now you can include this token in your fetch or Axios requests
 // fetch('/your-endpoint/', {
@@ -22,25 +28,31 @@ const csrfToken = document.cookie
 //     },
 //     // other request configurations
 // })
-
+const config = {
+  headers: {
+    "Content-type": "application/json",
+  },
+};
 export const loginUserAsync = createAsyncThunk(
   "login/loginUserAsync",
   async (userData) => {
-    const response = await fetch("http://localhost:5000/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrfToken,
-      },
-      body: JSON.stringify(userData),
+    // const response = await fetch("http://localhost:8000/login/", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     // "X-CSRFToken": csrfToken,
+    //   },
+    //   body: JSON.stringify(userData),
+    // });
+    // if (!response.ok) {
+    //   throw new Error("Registration failed");
+    // }
+    //   const data = await response.json();
+    //   return data;
+
+    client.post("/login/", userData, config).then(function (res) {
+      console.log(res);
     });
-
-    if (!response.ok) {
-      throw new Error("Registration failed");
-    }
-
-    const data = await response.json();
-    return data;
   }
 );
 const LoginSlice = createSlice({
